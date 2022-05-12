@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="row space-between">
+        <div class="column form-widget">
+            <h2 class="center form-widgte-title">Cadastrar</h2>
+            <form id="form" class="column form-content" novalidate>
+                <input id="username"    name="username"     type="text"     placeholder="Seu nome">
+                <p id="MsgErrorUsername"></p>
+                <input id="email"       name="email"        type="email"    placeholder="seuemail@email.com">
+                <p id="MsgErrorEmail"></p>
+                <input id="password1"   name="password1"    type="password" placeholder="Senha com no mínimo de 8 digitos">
+                <p id="MsgErrorPassword1"></p>
+                <input id="password2"   name="password2"    type="password" placeholder="Repita sua senha">
+                <p id="MsgErrorPassword2"></p>
+            </form>
+            <button id="SendBtn" class="btn" onclick="salvar()">Salvar</button>
+        </div>
+        <div class="MyUsers column center">
+            <h3>Usuarios registrados</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody id="userList">
+                    
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+<script>
+
+    //Setando variáveis
+    const   username = document.getElementById("username"),   
+            MsgErrorUsername = document.getElementById("MsgErrorUsername"),
+
+            email = document.getElementById("email"),         
+            MsgErrorEmail = document.getElementById("MsgErrorEmail"),
+
+            password1 = document.getElementById("password1"), 
+            MsgErrorPassword1 = document.getElementById("MsgErrorPassword1"),
+
+            password2 = document.getElementById("password2"), 
+            MsgErrorPassword2 = document.getElementById("MsgErrorPassword2"),
+
+            form = document.getElementById("form"),
+            SendBtn = document.getElementById("SendBtn");
+            
+            
+    let SenhasIguais = false, 
+        TamanhoUsername = false,
+        EmailValido = false,
+        SenhaMin = false,
+        userList = document.getElementById("userList"),
+        Salvar = false;
+
+    //Debounce function
+    debounce = (func, wait = 500) =>{
+        return ()=>{
+            timer = setTimeout(func, wait);
+        }
+    }
+
+    //Checa se Username possui de 3 a 25 caracteres
+    username.addEventListener('blur', ()=>{
+        if(username.value.length < 3 || username.value.length >= 25){
+            TamanhoUsername = false
+            username.style.border = "2px solid #ff0000"
+            MsgErrorUsername.style.opacity = 1
+            MsgErrorUsername.style.height = "auto"
+            MsgErrorUsername.innerText = "Nome deve ter entre 3 e 25 caractéres"
+        }else{
+            TamanhoUsername = true
+            username.style.border = "2px solid #00c950"
+            MsgErrorUsername.style.opacity = 0
+            MsgErrorUsername.style.height = 0
+            MsgErrorUsername.innerText = ""
+        }
+    })
+
+    //Checa se email é valido
+    email.addEventListener('blur', debounce(()=>{
+        if(!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.value)){
+            EmailValido = false
+            email.style.border = "2px solid #ff0000"
+            MsgErrorEmail.style.opacity = 1
+            MsgErrorEmail.style.height = "auto"
+            MsgErrorEmail.innerText = "Insira um E-Mail válido"
+        }else{
+            EmailValido = true
+            email.style.border = "2px solid #00c950"
+            MsgErrorEmail.style.opacity = 0
+            MsgErrorEmail.style.height = 0
+            MsgErrorEmail.innerText = ""
+
+        }
+    }))
+
+    //Checa se a senha contem no mínimo 8 caracteres
+    password1.addEventListener('blur', debounce(()=>{
+        if(password1.value.length >= 8){
+            SenhaMin = true
+            password1.style.border = "2px solid #00c950"
+            MsgErrorPassword1.style.opacity = 0
+            MsgErrorPassword1.style.height = 0
+            MsgErrorPassword1.innerText = ""
+
+        }else{
+            SenhaMin = false
+            password1.style.border = "2px solid #ff0000"
+            MsgErrorPassword1.style.opacity = 1
+            MsgErrorPassword1.style.height = "auto"
+            MsgErrorPassword1.innerText = "Senha deve conter no mínimo 8 caractéres"
+        }
+    }))
+    
+    //Checa se as senhas sao iguais
+    password2.addEventListener('blur', debounce(()=>{
+        if(password2.value == password1.value){
+            SenhasIguais = true
+            password2.style.border = "2px solid #00c950"
+            MsgErrorPassword2.style.opacity = 0
+            MsgErrorPassword2.style.height = 0
+            MsgErrorPassword2.innerText = ""
+
+        }else{
+            SenhasIguais = false
+            password2.style.border = "2px solid #ff0000"
+            MsgErrorPassword2.style.opacity = 1
+            MsgErrorPassword2.style.height = "auto"
+            MsgErrorPassword2.innerText = "As senhas devem ser iguais"
+
+        }
+    }))
+
+    //Ativa / Desativa Botao
+    form.addEventListener('focusout', debounce(()=>{
+        if(!SenhasIguais || !TamanhoUsername || !EmailValido || !SenhaMin){
+            SendBtn.style.color = '#666666'
+            SendBtn.style.backgroundColor = '#cccccc'
+            SendBtn.style.borderBlockColor = '#999999'
+            Salvar = false
+        }else{
+            Salvar = true
+            SendBtn.style.color = '#00171F'
+            SendBtn.style.backgroundColor = '#2191FB'
+            SendBtn.style.borderBlockColor = '#4ed4e3'
+        }
+    }, 1000))
+
+    salvar = () =>{
+        if(Salvar){
+            res = CreateUser(username.value, email.value, password1.value)
+            if(res == true){
+                username.value = ''
+                email.value = ''
+                password1.value = ''
+                password2.value = ''
+                userList.innerText = ''
+                
+                SenhasIguais = false
+                TamanhoUsername = false
+                EmailValido = false
+                SenhaMin = false
+                users.forEach(user => {
+                    userList.insertAdjacentHTML('beforeend', `<tr><td>${tdNome}</td><td>${tdEmail}</td></tr>`)
+                });
+            }else{
+                alert(`Erro: ${res}`);
+            }
+        }
+
+    }
+
+</script>
+<script src="index.js"></script>
+</html>
