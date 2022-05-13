@@ -163,6 +163,11 @@
         if(Salvar){
             res = CreateUser(username.value, email.value, password1.value)
             if(res == true){
+                
+                users.forEach(user => {
+                    userList.insertAdjacentHTML('beforeend', `<tr><td>${username.value}</td><td>${email.value}</td></tr>`)
+                });
+
                 username.value = ''
                 email.value = ''
                 password1.value = ''
@@ -173,9 +178,6 @@
                 TamanhoUsername = false
                 EmailValido = false
                 SenhaMin = false
-                users.forEach(user => {
-                    userList.insertAdjacentHTML('beforeend', `<tr><td>${username.value}</td><td>${email.value}</td></tr>`)
-                });
             }else{
                 alert(`Erro: ${res}`);
             }
