@@ -174,7 +174,7 @@
                 EmailValido = false
                 SenhaMin = false
                 users.forEach(user => {
-                    userList.insertAdjacentHTML('beforeend', `<tr><td>${tdNome}</td><td>${tdEmail}</td></tr>`)
+                    userList.insertAdjacentHTML('beforeend', `<tr><td>${username.value}</td><td>${email.value}</td></tr>`)
                 });
             }else{
                 alert(`Erro: ${res}`);
