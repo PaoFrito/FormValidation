@@ -163,11 +163,11 @@
         if(Salvar){
             res = CreateUser(username.value, email.value, password1.value)
             if(res == true){
-                
-                users.forEach(user => {
-                    userList.insertAdjacentHTML('beforeend', `<tr><td>${username.value}</td><td>${email.value}</td></tr>`)
-                });
 
+                users.forEach(user => {
+                    userList.insertAdjacentHTML('beforeend', `<tr><td>${user.username}</td><td>${user.email}</td></tr>`)
+                });
+                
                 username.value = ''
                 email.value = ''
                 password1.value = ''
